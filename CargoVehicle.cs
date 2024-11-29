@@ -1,47 +1,32 @@
-﻿using System;
+﻿public delegate void SpeedHandler(object sender, SpeedEventArgs e);
 
-namespace CargoTracking
+public class CargoVehicle
 {
-    public delegate void SpeedHandler(CargoVehicle sender, SpeedExceededEventArgs e);
+    public string Plaka { get; private set; } // Araç plakası
+    public string Marka { get; set; }        // Araç markası
+    private byte _speed;                     // Anlık hız
+    public event SpeedHandler SpeedExceeded; // Hız aşımı olayı
 
-    public class CargoVehicle
+    public byte Speed
     {
-        public string Plaka { get; private set; }
-        public string Marka { get; set; }
-        private int _speed;
-
-        public int Speed
+        get => _speed;
+        set
         {
-            get => _speed;
-            set
+            _speed = value;
+            if (_speed > 110) // Hız limiti kontrolü
             {
-                _speed = value;
-                if (_speed > SpeedLimit)
-                {
-                    OnSpeedExceeded(new SpeedExceededEventArgs(0, GenerateRandomLongitude(), _speed));
-                }
+                // Rastgele konum bilgileri
+                double latitude = 0;
+                double longitude = new Random().NextDouble() * 1000000;
+
+                // Olayı tetikle
+                SpeedExceeded?.Invoke(this, new SpeedEventArgs(_speed, latitude, longitude));
             }
         }
+    }
 
-        public int SpeedLimit { get; set; } = 110;
-
-        public event SpeedHandler SpeedExceeded;
-
-        public CargoVehicle(string plaka, string marka)
-        {
-            Plaka = plaka;
-            Marka = marka;
-        }
-
-        protected virtual void OnSpeedExceeded(SpeedExceededEventArgs e)
-        {
-            SpeedExceeded?.Invoke(this, e);
-        }
-
-        private double GenerateRandomLongitude()
-        {
-            Random rnd = new Random();
-            return rnd.NextDouble() * 1000000;
-        }
+    public CargoVehicle(string plaka)
+    {
+        Plaka = plaka;
     }
 }

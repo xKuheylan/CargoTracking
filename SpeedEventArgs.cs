@@ -1,20 +1,15 @@
-﻿using System;
-
-namespace CargoTracking
+﻿public class SpeedEventArgs : EventArgs
 {
-    public class SpeedExceededEventArgs : EventArgs
-    {
-        public double Latitude { get; set; }
-        public double Longitude { get; set; }
-        public DateTime Timestamp { get; set; }
-        public int Speed { get; set; }
+    public byte Speed { get; set; }          // Hız bilgisi
+    public double Latitude { get; set; }    // Enlem
+    public double Longitude { get; set; }   // Boylam
+    public DateTime Timestamp { get; set; } // Zaman bilgisi
 
-        public SpeedExceededEventArgs(double latitude, double longitude, int speed)
-        {
-            Latitude = latitude;
-            Longitude = longitude;
-            Timestamp = DateTime.Now;
-            Speed = speed;
-        }
+    public SpeedEventArgs(byte speed, double latitude, double longitude)
+    {
+        Speed = speed;
+        Latitude = latitude;
+        Longitude = longitude;
+        Timestamp = DateTime.Now;
     }
 }
