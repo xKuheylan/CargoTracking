@@ -2,15 +2,14 @@
 
 namespace CargoTracking
 {
-    public delegate void SpeedHandler(CargoVehicle sender, SpeedEventArgs e);
+    public delegate void SpeedHandler(CargoVehicle sender, SpeedExceededEventArgs e);
 
     public class CargoVehicle
     {
-        private int _speed;
-        private const int SpeedLimit = 110;
-
         public string Plaka { get; private set; }
-        public string Marka { get; private set; }
+        public string Marka { get; set; }
+        private int _speed;
+
         public int Speed
         {
             get => _speed;
@@ -19,14 +18,12 @@ namespace CargoTracking
                 _speed = value;
                 if (_speed > SpeedLimit)
                 {
-                    OnSpeedExceeded(new SpeedEventArgs(
-                        GetRandomLatitude(),
-                        GetRandomLongitude(),
-                        DateTime.Now,
-                        _speed));
+                    OnSpeedExceeded(new SpeedExceededEventArgs(0, GenerateRandomLongitude(), _speed));
                 }
             }
         }
+
+        public int SpeedLimit { get; set; } = 110;
 
         public event SpeedHandler SpeedExceeded;
 
@@ -36,12 +33,15 @@ namespace CargoTracking
             Marka = marka;
         }
 
-        protected virtual void OnSpeedExceeded(SpeedEventArgs e)
+        protected virtual void OnSpeedExceeded(SpeedExceededEventArgs e)
         {
             SpeedExceeded?.Invoke(this, e);
         }
 
-        private static double GetRandomLatitude() => 0.0;
-        private static double GetRandomLongitude() => new Random().NextDouble() * 1000000;
+        private double GenerateRandomLongitude()
+        {
+            Random rnd = new Random();
+            return rnd.NextDouble() * 1000000;
+        }
     }
 }
