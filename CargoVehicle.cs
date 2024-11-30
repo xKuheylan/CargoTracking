@@ -1,32 +1,52 @@
-﻿public delegate void SpeedHandler(object sender, SpeedEventArgs e);
+﻿// Delegate tanımı
+public delegate void SpeedHandler(object sender, SpeedEventArgs e);
 
+// CargoVehicle sınıfı
 public class CargoVehicle
 {
-    public string Plaka { get; private set; } // Araç plakası
-    public string Marka { get; set; }        // Araç markası
-    private byte _speed;                     // Anlık hız
-    public event SpeedHandler SpeedExceeded; // Hız aşımı olayı
+    private int _speed;
+    private const int SpeedLimit = 110;
 
-    public byte Speed
+    public string Plate { get; }
+    public string Brand { get; }
+
+    // Event tanımı
+    public event SpeedHandler SpeedExceeded;
+
+    public int Speed
     {
         get => _speed;
-        set
-        {
+        set {
             _speed = value;
-            if (_speed > 110) // Hız limiti kontrolü
+            if (_speed > SpeedLimit)
             {
-                // Rastgele konum bilgileri
-                double latitude = 0;
-                double longitude = new Random().NextDouble() * 1000000;
-
-                // Olayı tetikle
-                SpeedExceeded?.Invoke(this, new SpeedEventArgs(_speed, latitude, longitude));
+                OnSpeedExceeded(new SpeedEventArgs
+                {
+                    Plate = Plate,
+                    Brand = Brand,
+                    Latitude = GenerateRandomCoordinate(),
+                    Longitude = GenerateRandomCoordinate(),
+                    Speed = _speed,
+                    Timestamp = DateTime.Now
+                });
             }
         }
     }
 
-    public CargoVehicle(string plaka)
+    public CargoVehicle(string plate, string brand)
     {
-        Plaka = plaka;
+        Plate = plate;
+        Brand = brand;
+    }
+
+    protected virtual void OnSpeedExceeded(SpeedEventArgs e)
+    {
+        SpeedExceeded?.Invoke(this, e);
+    }
+
+    private double GenerateRandomCoordinate()
+    {
+        Random rand = new Random();
+        return rand.Next(0, 1000000) + rand.NextDouble();
     }
 }

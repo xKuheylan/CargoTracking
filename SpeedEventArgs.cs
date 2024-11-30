@@ -1,15 +1,9 @@
 ﻿public class SpeedEventArgs : EventArgs
 {
-    public byte Speed { get; set; }          // Hız bilgisi
-    public double Latitude { get; set; }    // Enlem
-    public double Longitude { get; set; }   // Boylam
-    public DateTime Timestamp { get; set; } // Zaman bilgisi
-
-    public SpeedEventArgs(byte speed, double latitude, double longitude)
-    {
-        Speed = speed;
-        Latitude = latitude;
-        Longitude = longitude;
-        Timestamp = DateTime.Now;
-    }
+    public string Plate { get; set; }
+    public string Brand { get; set; }
+    public double Latitude { get; set; }
+    public double Longitude { get; set; }
+    public int Speed { get; set; }
+    public DateTime Timestamp { get; set; }
 }
